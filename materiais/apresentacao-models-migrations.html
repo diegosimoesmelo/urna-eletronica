@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Urna Escola — Models e Migrations no Laravel</title>
+    <link rel="stylesheet" href="apresentacao.css">
+</head>
+<body>
+    <main id="apresentacao" aria-live="polite">
+        <section class="slide capa ativo" data-aula="Abertura">
+            <div class="selo">LARAVEL + MYSQL • PROJETO PRÁTICO</div>
+            <h1>Urna Escola</h1>
+            <p class="subtitulo">Models, migrations e banco de dados sem mistério</p>
+            <div class="capa-urna" aria-hidden="true">
+                <div class="tela">SEU VOTO<br><strong>É CÓDIGO</strong></div>
+                <div class="teclas">1 2 3<br>4 5 6<br>7 8 9<br>&nbsp; 0</div>
+            </div>
+            <p class="rodape-slide">Curso de programação para iniciantes</p>
+        </section>
+
+        <section class="slide" data-aula="Abertura">
+            <span class="numero-aula">NOSSA JORNADA</span>
+            <h2>Do problema ao banco de dados</h2>
+            <div class="linha-tempo">
+                <article><strong>1</strong><span>MVC</span><small>Quem faz o quê?</small></article>
+                <article><strong>2</strong><span>Migration</span><small>Como criar tabelas?</small></article>
+                <article><strong>3</strong><span>Model</span><small>Como usar os dados?</small></article>
+                <article><strong>4</strong><span>Relações</span><small>Como ligar tabelas?</small></article>
+                <article><strong>5</strong><span>Integração</span><small>Como tudo funciona?</small></article>
+            </div>
+            <div class="destaque"><strong>Meta final:</strong> compreender o caminho percorrido por um voto, da tela até o MySQL.</div>
+        </section>
+
+        <section class="slide divisoria" data-aula="Aula 1">
+            <span>AULA 1</span>
+            <h2>Conhecendo a arquitetura MVC</h2>
+            <p>Antes de criar tabelas, precisamos saber onde cada parte do código mora.</p>
+        </section>
+
+        <section class="slide" data-aula="Aula 1">
+            <span class="numero-aula">AULA 1 • OBJETIVOS</span>
+            <h2>Ao final desta aula, o aluno consegue…</h2>
+            <ul class="lista-check">
+                <li>explicar o significado de Model, View e Controller;</li>
+                <li>localizar essas camadas dentro de um projeto Laravel;</li>
+                <li>descrever o caminho de uma requisição;</li>
+                <li>identificar as entidades do projeto Urna Escola.</li>
+            </ul>
+            <div class="pergunta">Pergunta inicial: “O que acontece depois que clicamos em Confirmar?”</div>
+        </section>
+
+        <section class="slide" data-aula="Aula 1">
+            <span class="numero-aula">AULA 1 • CONCEITO</span>
+            <h2>MVC: três responsabilidades</h2>
+            <div class="grade-tres">
+                <article class="cartao camada-model"><span>M</span><h3>Model</h3><p>Representa dados e regras do domínio.</p><code>app/Models</code></article>
+                <article class="cartao camada-view"><span>V</span><h3>View</h3><p>Mostra a interface para o usuário.</p><code>resources/views</code></article>
+                <article class="cartao camada-controller"><span>C</span><h3>Controller</h3><p>Recebe ações e coordena o fluxo.</p><code>app/Http/Controllers</code></article>
+            </div>
+            <p class="frase-chave">Separar responsabilidades deixa o sistema mais fácil de entender, testar e modificar.</p>
+        </section>
+
+        <section class="slide" data-aula="Aula 1">
+            <span class="numero-aula">AULA 1 • FLUXO</span>
+            <h2>O caminho de uma ação</h2>
+            <div class="fluxo">
+                <div>🌐<strong>Navegador</strong><small>envia formulário</small></div><b>→</b>
+                <div>🛣️<strong>Rota</strong><small>escolhe controller</small></div><b>→</b>
+                <div>🎛️<strong>Controller</strong><small>valida e decide</small></div><b>→</b>
+                <div>📦<strong>Model</strong><small>acessa os dados</small></div><b>→</b>
+                <div>🗄️<strong>MySQL</strong><small>armazena</small></div>
+            </div>
+            <pre><code><em>// routes/web.php</em>
+Route::post('/urna/confirmar',
+    [UrnaController::class, 'confirmar']
+);</code></pre>
+        </section>
+
+        <section class="slide" data-aula="Aula 1">
+            <span class="numero-aula">AULA 1 • ANÁLISE</span>
+            <h2>Quais são as entidades da urna?</h2>
+            <div class="entidades">
+                <article><span>👤</span><strong>Eleitor</strong><small>nome, código, votou em</small></article>
+                <article><span>🗳️</span><strong>Candidato</strong><small>nome, número, partido</small></article>
+                <article><span>✅</span><strong>Voto</strong><small>tipo, número digitado</small></article>
+                <article><span>⚙️</span><strong>Eleição</strong><small>título, situação</small></article>
+                <article><span>🔐</span><strong>Usuário</strong><small>administração</small></article>
+            </div>
+            <div class="atividade"><strong>Atividade em duplas:</strong> escolha uma entidade e escreva três atributos e duas ações relacionadas a ela.</div>
+        </section>
+
+        <section class="slide divisoria" data-aula="Aula 2">
+            <span>AULA 2</span>
+            <h2>Migrations: construindo o banco</h2>
+            <p>Uma migration é o histórico versionado da estrutura do banco de dados.</p>
+        </section>
+
+        <section class="slide" data-aula="Aula 2">
+            <span class="numero-aula">AULA 2 • OBJETIVOS</span>
+            <h2>O que é uma migration?</h2>
+            <div class="comparacao">
+                <article><h3>Sem migrations</h3><p>“Execute esse SQL aí e torça para todos terem a mesma tabela.”</p><span class="ruim">Difícil de reproduzir</span></article>
+                <article><h3>Com migrations</h3><p>A estrutura vira código, entra no projeto e pode ser executada por toda a turma.</p><span class="bom">Versionável e repetível</span></article>
+            </div>
+            <p class="frase-chave">Migration não guarda os registros. Ela descreve como criar ou alterar as tabelas.</p>
+        </section>
+
+        <section class="slide" data-aula="Aula 2">
+            <span class="numero-aula">AULA 2 • ANATOMIA</span>
+            <h2>Os métodos <code>up()</code> e <code>down()</code></h2>
+            <div class="codigo-com-notas">
+                <pre><code>return new class extends Migration
+{
+    public function <mark>up</mark>(): void
+    {
+        Schema::create('candidatos', function (Blueprint $table) {
+            $table->id();
+            $table->string('nome');
+            $table->timestamps();
+        });
+    }
+
+    public function <mark>down</mark>(): void
+    {
+        Schema::dropIfExists('candidatos');
+    }
+};</code></pre>
+                <div><p><strong>up()</strong><br>Aplica a mudança.</p><p><strong>down()</strong><br>Desfaz a mudança.</p></div>
+            </div>
+        </section>
+
+        <section class="slide" data-aula="Aula 2">
+            <span class="numero-aula">AULA 2 • TIPOS</span>
+            <h2>Cada coluna possui uma intenção</h2>
+            <table>
+                <thead><tr><th>Migration</th><th>MySQL</th><th>Exemplo na urna</th></tr></thead>
+                <tbody>
+                    <tr><td><code>$table-&gt;id()</code></td><td>BIGINT</td><td>Identificador</td></tr>
+                    <tr><td><code>string('nome')</code></td><td>VARCHAR</td><td>Nome do candidato</td></tr>
+                    <tr><td><code>boolean('ativo')</code></td><td>BOOLEAN</td><td>Pode receber voto?</td></tr>
+                    <tr><td><code>timestamp('votou_em')</code></td><td>TIMESTAMP</td><td>Quando o eleitor votou</td></tr>
+                    <tr><td><code>enum('tipo', [...])</code></td><td>ENUM</td><td>Válido, branco ou nulo</td></tr>
+                    <tr><td><code>timestamps()</code></td><td>2 colunas</td><td>created_at e updated_at</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="slide" data-aula="Aula 2">
+            <span class="numero-aula">AULA 2 • EXEMPLO REAL</span>
+            <h2>Criando a tabela de candidatos</h2>
+            <pre><code>Schema::create('candidatos', function (Blueprint $table) {
+    $table->id();
+    $table->string('nome');
+    $table->string('numero', 2)-><mark>unique()</mark>;
+    $table->string('partido', 80);
+    $table->string('foto')-><mark>nullable()</mark>;
+    $table->boolean('ativo')-><mark>default(true)</mark>;
+    $table->timestamps();
+});</code></pre>
+            <div class="chips"><span><b>unique</b> não repete</span><span><b>nullable</b> é opcional</span><span><b>default</b> define valor inicial</span></div>
+        </section>
+
+        <section class="slide" data-aula="Aula 2">
+            <span class="numero-aula">AULA 2 • RELAÇÃO NO BANCO</span>
+            <h2>Chave estrangeira em votos</h2>
+            <pre><code>$table->foreignId('candidato_id')
+      ->nullable()
+      ->constrained('candidatos')
+      ->nullOnDelete();</code></pre>
+            <div class="grade-dois">
+                <article class="cartao"><h3>Por que <code>nullable()</code>?</h3><p>Votos brancos e nulos não possuem candidato.</p></article>
+                <article class="cartao"><h3>Por que <code>nullOnDelete()</code>?</h3><p>Se o candidato for removido, o voto permanece, mas perde a referência.</p></article>
+            </div>
+            <p class="alerta-slide">No nosso controller, candidatos com votos não podem ser excluídos — uma segunda proteção.</p>
+        </section>
+
+        <section class="slide" data-aula="Aula 2">
+            <span class="numero-aula">AULA 2 • TERMINAL</span>
+            <h2>Comandos que precisamos dominar</h2>
+            <div class="terminal">
+                <p><span>$</span> php artisan make:migration create_candidatos_table</p>
+                <p><span>$</span> php artisan migrate</p>
+                <p><span>$</span> php artisan migrate:status</p>
+                <p><span>$</span> php artisan migrate:rollback</p>
+                <p><span>$</span> php artisan migrate:fresh --seed</p>
+            </div>
+            <p class="alerta-slide"><strong>Atenção:</strong> <code>migrate:fresh</code> apaga todas as tabelas. Use somente no banco da aula.</p>
+        </section>
+
+        <section class="slide exercicio" data-aula="Aula 2">
+            <span class="numero-aula">AULA 2 • PRÁTICA — 25 MIN</span>
+            <h2>Desafio: criar a tabela de locais de votação</h2>
+            <ol>
+                <li>Crie a migration <code>create_locais_votacao_table</code>.</li>
+                <li>Adicione: <code>id</code>, <code>nome</code>, <code>sala</code>, <code>ativo</code> e timestamps.</li>
+                <li>Execute a migration e confira no MySQL.</li>
+                <li>Faça rollback e confirme que a tabela desapareceu.</li>
+            </ol>
+            <div class="criterios"><strong>Critérios:</strong> nomes claros • tipo adequado • método down correto</div>
+        </section>
+
+        <section class="slide divisoria" data-aula="Aula 3">
+            <span>AULA 3</span>
+            <h2>Models e Eloquent ORM</h2>
+            <p>O Model transforma linhas do banco em objetos PHP que conseguimos consultar e modificar.</p>
+        </section>
+
+        <section class="slide" data-aula="Aula 3">
+            <span class="numero-aula">AULA 3 • CONCEITO</span>
+            <h2>Uma linha vira um objeto</h2>
+            <div class="transformacao">
+                <div class="registro"><b>candidatos</b><span>id: 1</span><span>nome: Ana Silva</span><span>numero: 12</span></div>
+                <strong>⇄ Eloquent ⇄</strong>
+                <pre><code>$candidato->id;      <i>// 1</i>
+$candidato->nome;    <i>// Ana Silva</i>
+$candidato->numero;  <i>// 12</i></code></pre>
+            </div>
+            <p class="frase-chave">ORM significa Mapeamento Objeto-Relacional: objetos PHP conversam com tabelas relacionais.</p>
+        </section>
+
+        <section class="slide" data-aula="Aula 3">
+            <span class="numero-aula">AULA 3 • MODEL REAL</span>
+            <h2>Conhecendo o Model Candidato</h2>
+            <pre><code>class Candidato extends Model
+{
+    use HasFactory;
+
+    protected $table = 'candidatos';
+
+    protected $fillable = [
+        'nome', 'numero', 'partido', 'foto', 'ativo',
+    ];
+
+    protected function casts(): array
+    {
+        return ['ativo' => 'boolean'];
+    }
+}</code></pre>
+            <div class="chips"><span><b>$table</b> escolhe a tabela</span><span><b>$fillable</b> permite preenchimento</span><span><b>casts</b> converte tipos</span></div>
+        </section>
+
+        <section class="slide" data-aula="Aula 3">
+            <span class="numero-aula">AULA 3 • SEGURANÇA</span>
+            <h2>Por que existe <code>$fillable</code>?</h2>
+            <div class="grade-dois">
+                <article class="cartao"><h3>Permitido</h3><pre><code>Candidato::create([
+  'nome' => 'Ana',
+  'numero' => '12',
+  'partido' => 'Aprender',
+  'ativo' => true,
+]);</code></pre></article>
+                <article class="cartao"><h3>Ignorado/bloqueado</h3><pre><code>Candidato::create([
+  'id' => 999,
+  'administrador' => true,
+]);</code></pre></article>
+            </div>
+            <p class="frase-chave">Somente os campos declarados podem ser preenchidos em massa.</p>
+        </section>
+
+        <section class="slide" data-aula="Aula 3">
+            <span class="numero-aula">AULA 3 • CRUD</span>
+            <h2>Quatro operações com Eloquent</h2>
+            <pre><code><em>// CREATE — criar</em>
+$candidato = Candidato::create($dados);
+
+<em>// READ — consultar</em>
+$candidato = Candidato::where('numero', '12')->first();
+
+<em>// UPDATE — atualizar</em>
+$candidato->update(['ativo' => false]);
+
+<em>// DELETE — excluir</em>
+$candidato->delete();</code></pre>
+            <div class="pergunta">Qual dessas operações aparece quando o professor desativa um candidato?</div>
+        </section>
+
+        <section class="slide" data-aula="Aula 3">
+            <span class="numero-aula">AULA 3 • REGRA DE NEGÓCIO</span>
+            <h2>Models também expressam comportamento</h2>
+            <pre><code>class Eleitor extends Model
+{
+    protected function casts(): array
+    {
+        return ['votou_em' => 'datetime'];
+    }
+
+    public function jaVotou(): bool
+    {
+        return $this->votou_em !== null;
+    }
+}</code></pre>
+            <div class="comparacao compacta"><article><code>$eleitor->votou_em !== null</code><small>Detalhe técnico espalhado</small></article><article><code>$eleitor->jaVotou()</code><small>Intenção clara e reutilizável</small></article></div>
+        </section>
+
+        <section class="slide exercicio" data-aula="Aula 3">
+            <span class="numero-aula">AULA 3 • PRÁTICA — 30 MIN</span>
+            <h2>Laboratório no Tinker</h2>
+            <div class="terminal">
+                <p><span>$</span> php artisan tinker</p>
+                <p>Candidato::all();</p>
+                <p>Candidato::where('ativo', true)->get();</p>
+                <p>Candidato::where('numero', '12')->first();</p>
+                <p>Candidato::count();</p>
+            </div>
+            <p><strong>Desafio:</strong> criar um candidato, alterar seu partido e depois removê-lo, observando cada mudança no MySQL.</p>
+        </section>
+
+        <section class="slide divisoria" data-aula="Aula 4">
+            <span>AULA 4</span>
+            <h2>Relacionamentos entre Models</h2>
+            <p>Um candidato pode receber muitos votos; um voto pode pertencer a um candidato.</p>
+        </section>
+
+        <section class="slide" data-aula="Aula 4">
+            <span class="numero-aula">AULA 4 • MAPA</span>
+            <h2>Relacionamento um-para-muitos</h2>
+            <div class="diagrama-relacao">
+                <article><strong>CANDIDATO</strong><span>id</span><span>nome</span><span>numero</span></article>
+                <div><b>1</b><span>──────── recebe ────────</span><b>N</b></div>
+                <article><strong>VOTO</strong><span>id</span><span>candidato_id</span><span>tipo</span></article>
+            </div>
+            <div class="pergunta">Um voto branco pertence a algum candidato? Não — por isso a chave estrangeira aceita nulo.</div>
+        </section>
+
+        <section class="slide" data-aula="Aula 4">
+            <span class="numero-aula">AULA 4 • CÓDIGO</span>
+            <h2>Os dois lados da relação</h2>
+            <div class="grade-dois">
+                <article class="cartao"><h3>Candidato.php</h3><pre><code>public function votos(): HasMany
+{
+    return $this->hasMany(
+        Voto::class,
+        'candidato_id'
+    );
+}</code></pre></article>
+                <article class="cartao"><h3>Voto.php</h3><pre><code>public function candidato(): BelongsTo
+{
+    return $this->belongsTo(
+        Candidato::class,
+        'candidato_id'
+    );
+}</code></pre></article>
+            </div>
+        </section>
+
+        <section class="slide" data-aula="Aula 4">
+            <span class="numero-aula">AULA 4 • CONSULTAS</span>
+            <h2>Consultando através das relações</h2>
+            <pre><code><em>// Todos os votos de um candidato</em>
+$votos = $candidato->votos;
+
+<em>// Quantidade sem carregar todos os registros</em>
+$quantidade = $candidato->votos()->count();
+
+<em>// Candidato relacionado ao voto</em>
+$nome = $voto->candidato?->nome;
+
+<em>// Trazer candidatos já com sua contagem</em>
+$candidatos = Candidato::withCount('votos')->get();</code></pre>
+            <p class="alerta-slide">O operador <code>?-></code> é importante: votos brancos e nulos não possuem candidato.</p>
+        </section>
+
+        <section class="slide" data-aula="Aula 4">
+            <span class="numero-aula">AULA 4 • DECISÃO DE PROJETO</span>
+            <h2>Como preservamos o voto secreto?</h2>
+            <div class="sigilo">
+                <article><h3>eleitores</h3><p>Marca apenas <code>votou_em</code>.</p><span>Não sabe em quem votou</span></article>
+                <div class="cadeado">🔒<strong>SEM RELAÇÃO</strong></div>
+                <article><h3>votos</h3><p>Guarda candidato e tipo.</p><span>Não sabe quem votou</span></article>
+            </div>
+            <p class="frase-chave">Nem todo relacionamento possível deve existir. O modelo de dados também representa regras éticas.</p>
+        </section>
+
+        <section class="slide exercicio" data-aula="Aula 4">
+            <span class="numero-aula">AULA 4 • PRÁTICA — 25 MIN</span>
+            <h2>Desafio de consultas</h2>
+            <ol>
+                <li>Liste candidatos em ordem de número.</li>
+                <li>Conte os votos válidos de cada candidato.</li>
+                <li>Descubra quantos votos brancos existem.</li>
+                <li>Liste somente os eleitores que ainda não votaram.</li>
+            </ol>
+            <div class="dica"><strong>Dicas:</strong> <code>orderBy</code> • <code>withCount</code> • <code>where</code> • <code>whereNull</code></div>
+        </section>
+
+        <section class="slide divisoria" data-aula="Aula 5">
+            <span>AULA 5</span>
+            <h2>Integração: registrando um voto</h2>
+            <p>Agora juntamos rota, controller, models, transação e banco de dados.</p>
+        </section>
+
+        <section class="slide" data-aula="Aula 5">
+            <span class="numero-aula">AULA 5 • FLUXO COMPLETO</span>
+            <h2>Da tecla CONFIRMA ao MySQL</h2>
+            <ol class="passos-fluxo">
+                <li><b>1</b><span>A View envia <code>tipo</code> e <code>numero</code>.</span></li>
+                <li><b>2</b><span>A rota chama <code>UrnaController@confirmar</code>.</span></li>
+                <li><b>3</b><span>O Controller valida os dados.</span></li>
+                <li><b>4</b><span>O Model localiza candidato e eleitor.</span></li>
+                <li><b>5</b><span>A transação cria o voto e marca o eleitor.</span></li>
+                <li><b>6</b><span>O usuário é redirecionado para “FIM”.</span></li>
+            </ol>
+        </section>
+
+        <section class="slide" data-aula="Aula 5">
+            <span class="numero-aula">AULA 5 • VALIDAÇÃO</span>
+            <h2>Não confie nos dados recebidos</h2>
+            <pre><code>$dados = $request->validate([
+    'tipo' => ['required', 'in:numero,branco'],
+    'numero' => ['nullable', 'digits:2'],
+]);
+
+$candidato = Candidato::query()
+    ->where('numero', $dados['numero'])
+    ->where('ativo', true)
+    ->first();
+
+$tipo = $candidato ? Voto::TIPO_VALIDO : Voto::TIPO_NULO;</code></pre>
+            <p class="frase-chave">A interface ajuda o usuário, mas a validação do servidor protege o sistema.</p>
+        </section>
+
+        <section class="slide" data-aula="Aula 5">
+            <span class="numero-aula">AULA 5 • TRANSAÇÃO</span>
+            <h2>Duas mudanças, uma única operação</h2>
+            <pre><code>DB::transaction(function () use ($dados) {
+    $eleitor = Eleitor::query()
+        ->lockForUpdate()
+        ->find(session('eleitor_id'));
+
+    Voto::create([
+        'candidato_id' => $candidato?->id,
+        'tipo' => $tipo,
+        'numero_digitado' => $dados['numero'],
+    ]);
+
+    $eleitor->update(['votou_em' => now()]);
+});</code></pre>
+            <div class="chips"><span><b>transaction</b> tudo ou nada</span><span><b>lockForUpdate</b> impede concorrência</span><span><b>now()</b> data e hora atual</span></div>
+        </section>
+
+        <section class="slide" data-aula="Aula 5">
+            <span class="numero-aula">AULA 5 • DEPURAÇÃO</span>
+            <h2>Quando algo não funcionar…</h2>
+            <div class="grade-dois">
+                <div class="terminal">
+                    <p><span>$</span> php artisan route:list</p>
+                    <p><span>$</span> php artisan migrate:status</p>
+                    <p><span>$</span> php artisan test</p>
+                    <p><span>$</span> php artisan config:clear</p>
+                </div>
+                <ul class="lista-check menor">
+                    <li>Leia a primeira mensagem do erro.</li>
+                    <li>Confira nomes de tabela e coluna.</li>
+                    <li>Veja o arquivo <code>storage/logs/laravel.log</code>.</li>
+                    <li>Teste uma etapa por vez.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="slide exercicio" data-aula="Aula 5">
+            <span class="numero-aula">AULA 5 • PROJETO FINAL</span>
+            <h2>Desafio da turma</h2>
+            <p>Adicionar uma nova entidade <strong>Turma</strong> ao sistema:</p>
+            <ol>
+                <li>Criar a migration da tabela <code>turmas</code>.</li>
+                <li>Criar o Model <code>Turma</code> com <code>$fillable</code>.</li>
+                <li>Relacionar uma turma a muitos eleitores.</li>
+                <li>Criar cadastro e filtro de eleitores por turma.</li>
+                <li>Adicionar pelo menos dois testes.</li>
+            </ol>
+            <div class="criterios"><strong>Avaliação:</strong> banco 25% • Model 25% • funcionamento 30% • explicação 20%</div>
+        </section>
+
+        <section class="slide" data-aula="Encerramento">
+            <span class="numero-aula">REVISÃO</span>
+            <h2>Consegue explicar com suas palavras?</h2>
+            <div class="grade-tres perguntas-finais">
+                <article><strong>1</strong><p>Qual é a diferença entre Model e migration?</p></article>
+                <article><strong>2</strong><p>Para que servem <code>up()</code> e <code>down()</code>?</p></article>
+                <article><strong>3</strong><p>O que o <code>$fillable</code> protege?</p></article>
+                <article><strong>4</strong><p>O que significa <code>hasMany</code>?</p></article>
+                <article><strong>5</strong><p>Por que o voto não possui <code>eleitor_id</code>?</p></article>
+                <article><strong>6</strong><p>Quando usar uma transação?</p></article>
+            </div>
+        </section>
+
+        <section class="slide capa final" data-aula="Encerramento">
+            <div class="selo">AGORA É COM VOCÊS</div>
+            <h1>Do banco à urna</h1>
+            <p class="subtitulo">Entender os dados é entender o coração da aplicação.</p>
+            <div class="atalhos-finais">
+                <span><kbd>←</kbd> <kbd>→</kbd> navegar</span>
+                <span><kbd>F</kbd> tela cheia</span>
+                <span><kbd>Ctrl</kbd> + <kbd>P</kbd> exportar PDF</span>
+            </div>
+        </section>
+    </main>
+
+    <footer class="controles">
+        <button id="anterior" aria-label="Slide anterior">←</button>
+        <div><span id="aula-atual">Abertura</span><span id="contador">1 / 1</span></div>
+        <div class="progresso"><span id="barra-progresso"></span></div>
+        <button id="proximo" aria-label="Próximo slide">→</button>
+    </footer>
+    <script src="apresentacao.js"></script>
+</body>
+</html>
