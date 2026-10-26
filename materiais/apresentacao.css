@@ -145,6 +145,31 @@ td code { color: var(--azul); }
 .perguntas-finais strong { min-width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; color: white; background: var(--azul); }
 .perguntas-finais p { margin: 0; font-size: 1.05rem; }
 
+/* Componentes da apresentação do projeto completo */
+.mapa-curso { display: grid; grid-template-columns: repeat(2, 1fr); gap: 13px; }
+.mapa-curso article { padding: 15px 20px; display: flex; align-items: center; gap: 16px; border: 1px solid #dce4eb; border-radius: 11px; background: white; box-shadow: 0 6px 18px rgba(13,40,71,.05); }
+.mapa-curso b { min-width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; color: white; background: var(--azul); }
+.mapa-curso span { color: var(--azul-escuro); font-size: clamp(1rem, 1.35vw, 1.35rem); font-weight: 750; }
+.historias { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+.historias p { margin: 0; padding: 24px; border-left: 6px solid var(--azul); border-radius: 6px 13px 13px 6px; background: white; box-shadow: 0 8px 24px rgba(13,40,71,.07); }
+.arvore-projeto { display: grid; grid-template-columns: minmax(260px, .8fr) 1.5fr; overflow: hidden; border: 1px solid #d5e0e8; border-radius: 14px; background: white; box-shadow: 0 12px 32px rgba(13,40,71,.08); }
+.arvore-projeto code, .arvore-projeto span { padding: 14px 22px; border-bottom: 1px solid #e2e8ed; font-size: clamp(.95rem, 1.3vw, 1.3rem); }
+.arvore-projeto code { color: #cce6f7; background: var(--azul-escuro); }
+.arvore-projeto span { color: var(--suave); }
+.modelo-dados { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
+.modelo-dados article { overflow: hidden; display: grid; border: 2px solid var(--azul); border-radius: 12px; background: white; text-align: center; }
+.modelo-dados b { padding: 17px 8px; color: white; background: var(--azul); font-size: clamp(.8rem, 1.15vw, 1.15rem); }
+.modelo-dados span { padding: 18px 10px; color: var(--suave); }
+.maquina-estados, .mapa-final { margin-bottom: 32px; display: flex; align-items: center; justify-content: center; gap: 12px; }
+.maquina-estados span, .mapa-final span { padding: 14px 18px; border: 2px solid var(--azul); border-radius: 10px; color: var(--azul-escuro); background: white; font-weight: 750; text-align: center; }
+.maquina-estados b, .mapa-final b { color: var(--azul); font-size: .82rem; }
+.formula { margin: 7vh 0 5vh; padding: 28px; display: flex; align-items: center; justify-content: center; gap: 30px; border-radius: 15px; color: var(--azul-escuro); background: var(--azul-claro); font-size: clamp(1.15rem, 2vw, 2rem); text-align: center; }
+.formula strong { font-size: 2.5rem; }
+.perguntas-duas { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.perguntas-duas p { margin: 0; padding: 14px 20px; border-radius: 9px; background: white; box-shadow: 0 5px 16px rgba(13,40,71,.06); }
+.notas { max-width: 760px; padding: 18px 22px; position: fixed; z-index: 30; right: 24px; bottom: 72px; display: none; color: #e8f4fb; background: rgba(7,23,37,.96); border: 1px solid #4e718d; border-radius: 12px; box-shadow: 0 16px 45px rgba(0,0,0,.3); font-size: 1rem; line-height: 1.5; }
+.exibir-notas .slide.ativo .notas { display: block; }
+
 .controles { height: 54px; padding: 0 18px; position: fixed; inset: auto 0 0; z-index: 10; display: grid; grid-template-columns: 46px auto 1fr 46px; align-items: center; gap: 16px; color: #bdd1e2; background: #071725; }
 .controles button { width: 38px; height: 38px; border: 1px solid #38536b; border-radius: 8px; color: white; background: #102c44; cursor: pointer; }
 .controles button:disabled { opacity: .35; cursor: default; }
@@ -165,6 +190,9 @@ td code { color: var(--azul); }
     .entidades { grid-template-columns: repeat(2, 1fr); }
     .diagrama-relacao > div { transform: rotate(90deg); }
     .perguntas-finais { grid-template-columns: 1fr; }
+    .mapa-curso, .historias, .modelo-dados, .perguntas-duas { grid-template-columns: 1fr; }
+    .maquina-estados, .mapa-final { align-items: stretch; flex-direction: column; }
+    .notas { left: 14px; right: 14px; bottom: 64px; }
 }
 
 @media print {
@@ -173,6 +201,7 @@ td code { color: var(--azul); }
     #apresentacao { height: auto; }
     .slide, .slide.ativo, .divisoria, .divisoria.ativo { width: 100vw; height: 100vh; padding: 5vw 7vw; display: block !important; position: relative; page-break-after: always; overflow: hidden; animation: none; }
     .controles { display: none; }
+    .notas { display: none !important; }
     .capa h1 { margin-top: 14vh; }
     pre { white-space: pre-wrap; }
 }

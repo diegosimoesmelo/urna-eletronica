@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Urna Escola — Projeto completo em Laravel</title>
+    <link rel="stylesheet" href="apresentacao.css">
+</head>
+<body>
+    <main id="apresentacao">
+        <section class="slide capa ativo" data-aula="Abertura">
+            <div class="selo">CURSO PRÁTICO • LARAVEL 12 + MYSQL</div>
+            <h1>Urna Escola</h1>
+            <p class="subtitulo">Construindo e compreendendo um projeto web completo</p>
+            <div class="capa-urna" aria-hidden="true"><div class="tela">PROJETO<br><strong>FULL STACK</strong></div><div class="teclas">M V C<br>PHP<br>SQL</div></div>
+            <p class="rodape-slide">Da ideia ao teste automatizado • Material para iniciantes</p>
+            <aside class="notas"><strong>Condução:</strong> apresente primeiro o sistema funcionando. Peça aos alunos que anotem tudo o que imaginam existir “por trás” da tela.</aside>
+        </section>
+
+        <section class="slide" data-aula="Abertura">
+            <span class="numero-aula">VISÃO GERAL</span>
+            <h2>O que construiremos?</h2>
+            <div class="entidades">
+                <article><span>🗳️</span><strong>Urna</strong><small>voto válido, branco e nulo</small></article>
+                <article><span>👥</span><strong>Cadastros</strong><small>candidatos e eleitores</small></article>
+                <article><span>🔐</span><strong>Administração</strong><small>login e controle da eleição</small></article>
+                <article><span>📊</span><strong>Apuração</strong><small>totais e percentuais</small></article>
+                <article><span>🧪</span><strong>Testes</strong><small>fluxos verificados</small></article>
+            </div>
+            <div class="destaque"><strong>Produto final:</strong> aplicação MVC monolítica, responsiva, em português e conectada ao MySQL.</div>
+            <aside class="notas"><strong>Pergunta:</strong> quais dessas partes são visíveis ao eleitor? Quais existem apenas para o administrador?</aside>
+        </section>
+
+        <section class="slide" data-aula="Abertura">
+            <span class="numero-aula">COMPETÊNCIAS</span>
+            <h2>O que o aluno aprenderá?</h2>
+            <ul class="lista-check">
+                <li>transformar requisitos em entidades, telas e regras;</li>
+                <li>organizar código usando MVC monolítico;</li>
+                <li>criar banco com migrations e manipular dados com Eloquent;</li>
+                <li>construir rotas, Controllers, Views Blade e formulários;</li>
+                <li>aplicar autenticação, validação, sessões e transações;</li>
+                <li>investigar erros e escrever testes automatizados.</li>
+            </ul>
+            <aside class="notas"><strong>Avaliação diagnóstica:</strong> peça uma explicação rápida de HTTP, banco de dados e classe PHP. Isso ajuda a ajustar o ritmo.</aside>
+        </section>
+
+        <section class="slide" data-aula="Abertura">
+            <span class="numero-aula">PERCURSO • 8 AULAS</span>
+            <h2>Uma entrega funcional por aula</h2>
+            <div class="mapa-curso">
+                <article><b>1</b><span>Planejamento e ambiente</span></article><article><b>2</b><span>MVC e rotas</span></article>
+                <article><b>3</b><span>Banco e Models</span></article><article><b>4</b><span>Administração e CRUD</span></article>
+                <article><b>5</b><span>Blade e interface</span></article><article><b>6</b><span>Fluxo da votação</span></article>
+                <article><b>7</b><span>Apuração e segurança</span></article><article><b>8</b><span>Testes e apresentação</span></article>
+            </div>
+            <p class="frase-chave">Estratégia: explicar pouco, demonstrar, praticar e revisar.</p>
+        </section>
+
+        <section class="slide divisoria" data-aula="Aula 1"><span>AULA 1</span><h2>Planejamento e ambiente</h2><p>Começamos pelo problema, não pelo código.</p></section>
+
+        <section class="slide" data-aula="Aula 1">
+            <span class="numero-aula">AULA 1 • SITUAÇÃO-PROBLEMA</span>
+            <h2>Uma eleição simulada para a turma</h2>
+            <div class="grade-dois">
+                <article class="cartao"><h3>Eleitor precisa…</h3><p>identificar-se, escolher, conferir e votar uma única vez.</p></article>
+                <article class="cartao"><h3>Professor precisa…</h3><p>cadastrar participantes, abrir a votação e consultar o resultado.</p></article>
+            </div>
+            <div class="pergunta">Quais regras não podem ser quebradas, mesmo se alguém manipular o navegador?</div>
+            <aside class="notas"><strong>Condução:</strong> escreva as respostas no quadro e separe em requisitos funcionais e regras de negócio.</aside>
+        </section>
+
+        <section class="slide" data-aula="Aula 1">
+            <span class="numero-aula">AULA 1 • REQUISITOS</span>
+            <h2>Histórias de usuário</h2>
+            <div class="historias">
+                <p><b>Como eleitor,</b> quero entrar com meu código para acessar a urna.</p>
+                <p><b>Como eleitor,</b> quero corrigir antes de confirmar para evitar enganos.</p>
+                <p><b>Como administrador,</b> quero cadastrar candidatos e eleitores.</p>
+                <p><b>Como administrador,</b> quero encerrar a eleição e apurar os votos.</p>
+            </div>
+            <p class="frase-chave">Uma boa história informa quem usa, o que deseja e qual valor recebe.</p>
+        </section>
+
+        <section class="slide" data-aula="Aula 1">
+            <span class="numero-aula">AULA 1 • REGRAS</span>
+            <h2>Requisitos não são todos iguais</h2>
+            <table><thead><tr><th>Funcionalidade</th><th>Regra de negócio</th><th>Qualidade</th></tr></thead>
+                <tbody><tr><td>Cadastrar candidato</td><td>Número deve ser único</td><td>Interface responsiva</td></tr>
+                <tr><td>Registrar voto</td><td>Código vota uma vez</td><td>Voto deve ser secreto</td></tr>
+                <tr><td>Exibir apuração</td><td>Branco não tem candidato</td><td>Operação consistente</td></tr></tbody></table>
+            <aside class="notas"><strong>Atividade:</strong> entregue cartões com requisitos e peça que os grupos classifiquem cada um nas três colunas.</aside>
+        </section>
+
+        <section class="slide" data-aula="Aula 1">
+            <span class="numero-aula">AULA 1 • FERRAMENTAS</span>
+            <h2>Nosso ambiente de desenvolvimento</h2>
+            <div class="grade-tres">
+                <article class="cartao"><h3>PHP 8.2+</h3><p>Linguagem executada no servidor.</p></article>
+                <article class="cartao"><h3>Laravel 12</h3><p>Framework, rotas, Eloquent e Blade.</p></article>
+                <article class="cartao"><h3>MySQL</h3><p>Persistência relacional dos dados.</p></article>
+                <article class="cartao"><h3>Composer</h3><p>Dependências do projeto PHP.</p></article>
+                <article class="cartao"><h3>Navegador</h3><p>Interface e ferramentas de desenvolvedor.</p></article>
+                <article class="cartao"><h3>Terminal</h3><p>Artisan, testes e diagnóstico.</p></article>
+            </div>
+        </section>
+
+        <section class="slide exercicio" data-aula="Aula 1">
+            <span class="numero-aula">AULA 1 • PRÁTICA</span>
+            <h2>Primeiro contato com o projeto</h2>
+            <div class="terminal"><p><span>$</span> composer install</p><p><span>$</span> php artisan --version</p><p><span>$</span> php artisan migrate --seed</p><p><span>$</span> php artisan serve</p></div>
+            <ol><li>Abrir a página inicial.</li><li>Votar com o código <code>100001</code>.</li><li>Entrar em <code>admin@urna.test</code>.</li><li>Registrar observações sobre o comportamento.</li></ol>
+            <aside class="notas"><strong>Erro produtivo:</strong> se aparecer “could not find driver”, use o caso para explicar extensões do PHP e ambiente.</aside>
+        </section>
+
+        <section class="slide divisoria" data-aula="Aula 2"><span>AULA 2</span><h2>MVC, pastas e rotas</h2><p>Entendendo como uma requisição atravessa a aplicação.</p></section>
+
+        <section class="slide" data-aula="Aula 2">
+            <span class="numero-aula">AULA 2 • ARQUITETURA</span><h2>Monolítico não significa desorganizado</h2>
+            <div class="grade-tres"><article class="cartao camada-model"><span>M</span><h3>Model</h3><p>Dados, relações e comportamento.</p></article><article class="cartao camada-view"><span>V</span><h3>View</h3><p>HTML produzido no servidor.</p></article><article class="cartao camada-controller"><span>C</span><h3>Controller</h3><p>Coordena entrada e resposta.</p></article></div>
+            <p class="frase-chave">Uma aplicação única pode ter responsabilidades bem separadas.</p>
+        </section>
+
+        <section class="slide" data-aula="Aula 2">
+            <span class="numero-aula">AULA 2 • PASTAS</span><h2>Mapa do projeto Laravel</h2>
+            <div class="arvore-projeto"><code>app/Models</code><span>entidades Eloquent</span><code>app/Http/Controllers</code><span>fluxos da aplicação</span><code>database/migrations</code><span>estrutura do banco</span><code>resources/views</code><span>templates Blade</span><code>routes/web.php</code><span>endereços HTTP</span><code>tests/Feature</code><span>testes dos fluxos</span></div>
+            <aside class="notas"><strong>Dinâmica:</strong> fale uma responsabilidade e peça que um aluno aponte a pasta correspondente.</aside>
+        </section>
+
+        <section class="slide" data-aula="Aula 2">
+            <span class="numero-aula">AULA 2 • REQUISIÇÃO</span><h2>O caminho completo</h2>
+            <div class="fluxo"><div>🌐<strong>Browser</strong><small>POST /urna/acessar</small></div><b>→</b><div>🛣️<strong>Route</strong><small>escolhe ação</small></div><b>→</b><div>🎛️<strong>Controller</strong><small>valida</small></div><b>→</b><div>📦<strong>Model</strong><small>consulta</small></div><b>→</b><div>🗄️<strong>MySQL</strong><small>responde</small></div></div>
+            <pre><code>Route::post('/urna/acessar', [UrnaController::class, 'acessar'])
+    ->name('urna.acessar');</code></pre>
+        </section>
+
+        <section class="slide" data-aula="Aula 2">
+            <span class="numero-aula">AULA 2 • ROTAS</span><h2>Verbo + endereço + ação + nome</h2>
+            <pre><code>Route::<mark>get</mark>('/urna', [UrnaController::class, 'identificacao'])
+    ->name('urna.identificacao');
+
+Route::<mark>post</mark>('/urna/confirmar', [UrnaController::class, 'confirmar'])
+    ->name('urna.confirmar');
+
+Route::middleware('auth')->group(function () {
+    Route::resource('candidatos', CandidatoController::class);
+});</code></pre>
+            <div class="chips"><span>GET consulta/tela</span><span>POST cria/ação</span><span>PUT atualiza</span><span>DELETE remove</span></div>
+        </section>
+
+        <section class="slide exercicio" data-aula="Aula 2">
+            <span class="numero-aula">AULA 2 • PRÁTICA</span><h2>Rastreie uma requisição</h2>
+            <ol><li>Execute <code>php artisan route:list</code>.</li><li>Localize a rota <code>administracao.candidatos.store</code>.</li><li>Abra o método indicado no Controller.</li><li>Identifique qual Model e qual View participam.</li><li>Desenhe o fluxo em uma folha.</li></ol>
+            <div class="criterios"><strong>Entrega:</strong> rota, verbo, Controller, método, Model, resposta.</div>
+        </section>
+
+        <section class="slide divisoria" data-aula="Aula 3"><span>AULA 3</span><h2>Banco de dados e Eloquent</h2><p>Da estrutura SQL aos objetos PHP.</p></section>
+
+        <section class="slide" data-aula="Aula 3">
+            <span class="numero-aula">AULA 3 • MODELO DE DADOS</span><h2>As tabelas do sistema</h2>
+            <div class="modelo-dados"><article><b>users</b><span>administração</span></article><article><b>configuracoes_eleicao</b><span>título e status</span></article><article><b>candidatos</b><span>opções de voto</span></article><article><b>eleitores</b><span>códigos e participação</span></article><article><b>votos</b><span>resultado anônimo</span></article></div>
+            <p class="frase-chave">A tabela de votos não possui eleitor_id: o banco também protege o sigilo.</p>
+        </section>
+
+        <section class="slide" data-aula="Aula 3">
+            <span class="numero-aula">AULA 3 • MIGRATION</span><h2>Estrutura como código versionado</h2>
+            <pre><code>Schema::create('candidatos', function (Blueprint $table) {
+    $table->id();
+    $table->string('nome');
+    $table->string('numero', 2)->unique();
+    $table->string('partido', 80);
+    $table->string('foto')->nullable();
+    $table->boolean('ativo')->default(true);
+    $table->timestamps();
+});</code></pre>
+            <aside class="notas"><strong>Faça previsões:</strong> antes de explicar cada coluna, pergunte qual problema <code>unique</code>, <code>nullable</code> e <code>default</code> resolvem.</aside>
+        </section>
+
+        <section class="slide" data-aula="Aula 3">
+            <span class="numero-aula">AULA 3 • CHAVE ESTRANGEIRA</span><h2>Ligando votos a candidatos</h2>
+            <pre><code>$table->foreignId('candidato_id')
+    ->nullable()
+    ->constrained('candidatos')
+    ->nullOnDelete();
+
+$table->enum('tipo', ['valido', 'branco', 'nulo']);</code></pre>
+            <div class="grade-dois"><article class="cartao"><h3>Voto válido</h3><p>Possui candidato_id e tipo “valido”.</p></article><article class="cartao"><h3>Branco ou nulo</h3><p>candidato_id fica nulo; o tipo explica o voto.</p></article></div>
+        </section>
+
+        <section class="slide" data-aula="Aula 3">
+            <span class="numero-aula">AULA 3 • MODEL</span><h2>A tabela ganha uma classe PHP</h2>
+            <pre><code>class Candidato extends Model
+{
+    protected $table = 'candidatos';
+
+    protected $fillable = [
+        'nome', 'numero', 'partido', 'foto', 'ativo',
+    ];
+
+    protected function casts(): array
+    {
+        return ['ativo' => 'boolean'];
+    }
+}</code></pre>
+            <div class="chips"><span>$table → tabela</span><span>$fillable → campos permitidos</span><span>casts → tipos PHP</span></div>
+        </section>
+
+        <section class="slide" data-aula="Aula 3">
+            <span class="numero-aula">AULA 3 • RELAÇÕES</span><h2>hasMany e belongsTo</h2>
+            <div class="grade-dois"><article class="cartao"><h3>Candidato</h3><pre><code>public function votos(): HasMany
+{
+  return $this->hasMany(
+    Voto::class, 'candidato_id'
+  );
+}</code></pre></article><article class="cartao"><h3>Voto</h3><pre><code>public function candidato(): BelongsTo
+{
+  return $this->belongsTo(
+    Candidato::class, 'candidato_id'
+  );
+}</code></pre></article></div>
+        </section>
+
+        <section class="slide" data-aula="Aula 3">
+            <span class="numero-aula">AULA 3 • SEEDER</span><h2>Dados prontos para aprender</h2>
+            <pre><code>Candidato::updateOrCreate(
+    ['numero' => '12'],
+    ['nome' => 'Ana Silva',
+     'partido' => 'Partido Aprender',
+     'ativo' => true]
+);</code></pre>
+            <p class="frase-chave">Migration cria a estrutura. Seeder cria dados iniciais ou de demonstração.</p>
+            <aside class="notas"><strong>Comparação:</strong> migration é construir a estante; seeder é colocar livros nela.</aside>
+        </section>
+
+        <section class="slide exercicio" data-aula="Aula 3">
+            <span class="numero-aula">AULA 3 • LABORATÓRIO</span><h2>Explorando com Tinker</h2>
+            <div class="terminal"><p><span>$</span> php artisan tinker</p><p>Candidato::all();</p><p>Candidato::where('ativo', true)->get();</p><p>Eleitor::whereNull('votou_em')->count();</p><p>Voto::where('tipo', 'branco')->count();</p></div>
+            <p><strong>Desafio:</strong> crie, atualize, consulte e remova um candidato de teste.</p>
+        </section>
+
+        <section class="slide divisoria" data-aula="Aula 4"><span>AULA 4</span><h2>Administração e CRUD</h2><p>Controllers, validação, autenticação e arquivos.</p></section>
+
+        <section class="slide" data-aula="Aula 4">
+            <span class="numero-aula">AULA 4 • CRUD</span><h2>Uma operação, várias camadas</h2>
+            <div class="fluxo"><div>📝<strong>Formulário</strong><small>dados</small></div><b>→</b><div>🛣️<strong>Rota</strong><small>POST</small></div><b>→</b><div>🎛️<strong>Controller</strong><small>valida</small></div><b>→</b><div>📦<strong>Model</strong><small>create</small></div><b>→</b><div>↪️<strong>Redirect</strong><small>feedback</small></div></div>
+            <div class="chips"><span>Create</span><span>Read</span><span>Update</span><span>Delete</span></div>
+        </section>
+
+        <section class="slide" data-aula="Aula 4">
+            <span class="numero-aula">AULA 4 • VALIDAÇÃO</span><h2>O servidor define o que é válido</h2>
+            <pre><code>$dados = $request->validate([
+    'nome' => ['required', 'string', 'max:120'],
+    'numero' => ['required', 'digits:2', Rule::unique('candidatos')],
+    'partido' => ['required', 'string', 'max:80'],
+    'foto' => ['nullable', 'image', 'max:2048'],
+]);</code></pre>
+            <p class="frase-chave">Atributos HTML ajudam a experiência; regras PHP protegem a aplicação.</p>
+        </section>
+
+        <section class="slide" data-aula="Aula 4">
+            <span class="numero-aula">AULA 4 • CONTROLLER</span><h2>Salvando o candidato</h2>
+            <pre><code>public function store(Request $request): RedirectResponse
+{
+    $dados = $this->validar($request);
+    $dados['ativo'] = $request->boolean('ativo');
+
+    if ($request->hasFile('foto')) {
+        $dados['foto'] = $request->file('foto')
+            ->store('candidatos', 'public');
+    }
+
+    Candidato::create($dados);
+
+    return redirect()->route('administracao.candidatos.index')
+        ->with('sucesso', 'Candidato cadastrado.');
+}</code></pre>
+        </section>
+
+        <section class="slide" data-aula="Aula 4">
+            <span class="numero-aula">AULA 4 • AUTENTICAÇÃO</span><h2>Protegendo a administração</h2>
+            <pre><code>Route::middleware('auth')->group(function () {
+    Route::get('/administracao', [PainelController::class, 'index']);
+    Route::resource('candidatos', CandidatoController::class);
+    Route::resource('eleitores', EleitorController::class);
+});</code></pre>
+            <div class="comparacao compacta"><article><code>Auth::attempt($credenciais)</code><small>confere e inicia sessão</small></article><article><code>Auth::logout()</code><small>encerra a sessão</small></article></div>
+            <aside class="notas"><strong>Demonstração:</strong> abra uma rota administrativa em janela anônima e observe o redirecionamento.</aside>
+        </section>
+
+        <section class="slide" data-aula="Aula 4">
+            <span class="numero-aula">AULA 4 • DECISÕES</span><h2>Exclusão exige cuidado</h2>
+            <pre><code>if ($candidato->votos()->exists()) {
+    return back()->with(
+        'erro',
+        'Não é possível excluir quem já recebeu votos. Desative-o.'
+    );
+}</code></pre>
+            <p class="frase-chave">CRUD não é apenas chamar delete: regras de negócio decidem quando a operação é permitida.</p>
+        </section>
+
+        <section class="slide exercicio" data-aula="Aula 4">
+            <span class="numero-aula">AULA 4 • PRÁTICA</span><h2>CRUD orientado em duplas</h2>
+            <ol><li>Cadastre um eleitor pelo painel.</li><li>Force um erro usando código repetido.</li><li>Edite o nome preservando o código.</li><li>Exclua um eleitor que ainda não votou.</li><li>Explique qual método do Controller atuou em cada etapa.</li></ol>
+            <div class="criterios"><strong>Observar:</strong> rota • validação • SQL gerado • mensagem ao usuário.</div>
+        </section>
+
+        <section class="slide divisoria" data-aula="Aula 5"><span>AULA 5</span><h2>Blade e experiência do usuário</h2><p>Interface renderizada no servidor com comportamento no navegador.</p></section>
+
+        <section class="slide" data-aula="Aula 5">
+            <span class="numero-aula">AULA 5 • TEMPLATE</span><h2>Blade mistura HTML e dados com clareza</h2>
+            <pre><code>&lt;h1&gt;{{ $eleicao->titulo }}&lt;/h1&gt;
+
+@if ($eleicao->status === 'aberta')
+    &lt;a href="{{ route('urna.identificacao') }}"&gt;
+        Iniciar votação
+    &lt;/a&gt;
+@else
+    &lt;span&gt;Votação indisponível&lt;/span&gt;
+@endif</code></pre>
+            <div class="chips"><span>{{ }} imprime escapando HTML</span><span>@if decide</span><span>@foreach repete</span></div>
+        </section>
+
+        <section class="slide" data-aula="Aula 5">
+            <span class="numero-aula">AULA 5 • REUTILIZAÇÃO</span><h2>Layouts evitam repetição</h2>
+            <div class="grade-dois"><article class="cartao"><h3>layouts/app.blade.php</h3><p>HTML base, cabeçalho, mensagens e rodapé.</p><pre><code>@yield('conteudo')
+@stack('scripts')</code></pre></article><article class="cartao"><h3>inicio.blade.php</h3><p>Preenche as áreas definidas pelo layout.</p><pre><code>@extends('layouts.app')
+@section('conteudo')
+  ...
+@endsection</code></pre></article></div>
+        </section>
+
+        <section class="slide" data-aula="Aula 5">
+            <span class="numero-aula">AULA 5 • FORMULÁRIOS</span><h2>CSRF e métodos HTTP</h2>
+            <pre><code>&lt;form action="{{ route('administracao.candidatos.update', $candidato) }}"
+      method="POST"&gt;
+    @csrf
+    @method('PUT')
+
+    &lt;input name="nome" value="{{ old('nome', $candidato->nome) }}"&gt;
+    &lt;button&gt;Salvar&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+            <div class="chips"><span>@csrf evita requisição forjada</span><span>@method simula PUT/DELETE</span><span>old recupera entrada</span></div>
+        </section>
+
+        <section class="slide" data-aula="Aula 5">
+            <span class="numero-aula">AULA 5 • JAVASCRIPT</span><h2>A urna possui estados visuais</h2>
+            <div class="maquina-estados"><span>Inicial</span><b>digita</b><span>Número parcial</span><b>2 dígitos</b><span>Candidato ou nulo</span><b>confirma</b><span>Enviado</span></div>
+            <pre><code>const resposta = await fetch(`${url}/${numero}`);
+const dados = await resposta.json();
+
+if (dados.encontrado) {
+    mostrarCandidato(dados);
+} else {
+    mostrarVotoNulo();
+}</code></pre>
+            <aside class="notas"><strong>Estratégia:</strong> desenhe a máquina de estados antes de mostrar o JavaScript. Isso reduz a sensação de “código mágico”.</aside>
+        </section>
+
+        <section class="slide" data-aula="Aula 5">
+            <span class="numero-aula">AULA 5 • ACESSIBILIDADE</span><h2>Interface boa funciona para mais pessoas</h2>
+            <ul class="lista-check"><li>rótulos associados aos campos;</li><li>contraste e tamanho de texto legíveis;</li><li>teclado físico também controla a urna;</li><li><code>aria-live</code> anuncia mudanças importantes;</li><li>layout adapta-se a telas menores;</li><li>erros aparecem perto da tarefa.</li></ul>
+        </section>
+
+        <section class="slide exercicio" data-aula="Aula 5">
+            <span class="numero-aula">AULA 5 • PRÁTICA</span><h2>Melhoria de interface</h2>
+            <p>Escolha uma tela e realize uma melhoria mensurável:</p>
+            <div class="grade-tres"><article class="cartao"><h3>Clareza</h3><p>Texto ou feedback mais compreensível.</p></article><article class="cartao"><h3>Acessibilidade</h3><p>Navegação, rótulo ou contraste.</p></article><article class="cartao"><h3>Responsividade</h3><p>Comportamento em celular.</p></article></div>
+            <div class="criterios"><strong>Apresente:</strong> problema observado, alteração feita e como foi testada.</div>
+        </section>
+
+        <section class="slide divisoria" data-aula="Aula 6"><span>AULA 6</span><h2>O fluxo da votação</h2><p>Sessão, consulta, tipos de voto e transação.</p></section>
+
+        <section class="slide" data-aula="Aula 6">
+            <span class="numero-aula">AULA 6 • IDENTIFICAÇÃO</span><h2>O código abre uma sessão temporária</h2>
+            <pre><code>$eleitor = Eleitor::where('codigo_acesso', $dados['codigo_acesso'])
+    ->first();
+
+if (! $eleitor || $eleitor->jaVotou()) {
+    return back()->withErrors([
+        'codigo_acesso' => 'Código inválido ou já utilizado.'
+    ]);
+}
+
+$request->session()->regenerate();
+$request->session()->put('eleitor_id', $eleitor->id);</code></pre>
+        </section>
+
+        <section class="slide" data-aula="Aula 6">
+            <span class="numero-aula">AULA 6 • CONSULTA</span><h2>Uma pequena resposta JSON</h2>
+            <pre><code>return response()->json([
+    'encontrado' => true,
+    'nome' => $candidato->nome,
+    'numero' => $candidato->numero,
+    'partido' => $candidato->partido,
+    'foto' => $candidato->foto
+        ? asset('storage/'.$candidato->foto)
+        : null,
+]);</code></pre>
+            <p class="frase-chave">A aplicação continua monolítica: o mesmo Laravel entrega páginas e uma resposta JSON pontual.</p>
+        </section>
+
+        <section class="slide" data-aula="Aula 6">
+            <span class="numero-aula">AULA 6 • CLASSIFICAÇÃO</span><h2>Válido, branco ou nulo</h2>
+            <table><thead><tr><th>Ação</th><th>candidato_id</th><th>tipo</th><th>numero_digitado</th></tr></thead><tbody><tr><td>Número existente</td><td>ID encontrado</td><td>valido</td><td>12</td></tr><tr><td>Botão BRANCO</td><td>NULL</td><td>branco</td><td>NULL</td></tr><tr><td>Número inexistente</td><td>NULL</td><td>nulo</td><td>99</td></tr></tbody></table>
+            <aside class="notas"><strong>Atividade rápida:</strong> entregue cenários e peça que os alunos preencham as três últimas colunas.</aside>
+        </section>
+
+        <section class="slide" data-aula="Aula 6">
+            <span class="numero-aula">AULA 6 • CONSISTÊNCIA</span><h2>A transação garante “tudo ou nada”</h2>
+            <pre><code>DB::transaction(function () use ($dados) {
+    $eleitor = Eleitor::lockForUpdate()->find(session('eleitor_id'));
+
+    if (! $eleitor || $eleitor->jaVotou()) {
+        throw ValidationException::withMessages([...]);
+    }
+
+    Voto::create([...]);
+    $eleitor->update(['votou_em' => now()]);
+});</code></pre>
+            <div class="chips"><span>transaction → atomicidade</span><span>lockForUpdate → concorrência</span><span>sessão removida após votar</span></div>
+        </section>
+
+        <section class="slide" data-aula="Aula 6">
+            <span class="numero-aula">AULA 6 • SIGILO</span><h2>Participação e escolha ficam separadas</h2>
+            <div class="sigilo"><article><h3>eleitores</h3><p>Quem já participou?</p><span>votou_em</span></article><div class="cadeado">🔒<strong>NÃO CONECTAR</strong></div><article><h3>votos</h3><p>Qual escolha foi registrada?</p><span>tipo e candidato</span></article></div>
+            <p class="frase-chave">Privacidade deve ser decidida no desenho do banco, não adicionada no final.</p>
+        </section>
+
+        <section class="slide exercicio" data-aula="Aula 6">
+            <span class="numero-aula">AULA 6 • INVESTIGAÇÃO</span><h2>Siga um voto no sistema</h2>
+            <ol><li>Use um eleitor ainda pendente.</li><li>Abra as ferramentas de rede do navegador.</li><li>Digite um candidato e observe a resposta JSON.</li><li>Confirme e confira as tabelas <code>votos</code> e <code>eleitores</code>.</li><li>Tente reutilizar o mesmo código e explique o bloqueio.</li></ol>
+            <div class="criterios"><strong>Produto:</strong> um diagrama do fluxo com dados de entrada e saída.</div>
+        </section>
+
+        <section class="slide divisoria" data-aula="Aula 7"><span>AULA 7</span><h2>Apuração e segurança</h2><p>Transformando registros em informação sem quebrar as regras.</p></section>
+
+        <section class="slide" data-aula="Aula 7">
+            <span class="numero-aula">AULA 7 • CONSULTAS</span><h2>Contando os resultados</h2>
+            <pre><code>$total = Voto::count();
+$brancos = Voto::where('tipo', Voto::TIPO_BRANCO)->count();
+$nulos = Voto::where('tipo', Voto::TIPO_NULO)->count();
+$validos = Voto::where('tipo', Voto::TIPO_VALIDO)->count();
+
+$candidatos = Candidato::withCount([
+    'votos' => fn ($query) => $query->where('tipo', 'valido')
+])->orderByDesc('votos_count')->get();</code></pre>
+        </section>
+
+        <section class="slide" data-aula="Aula 7">
+            <span class="numero-aula">AULA 7 • MATEMÁTICA</span><h2>Percentuais precisam de denominador</h2>
+            <div class="formula"><span>percentual do candidato</span><strong>=</strong><span>votos do candidato ÷ votos válidos × 100</span></div>
+            <pre><code>$percentual = $validos > 0
+    ? ($candidato->votos_count / $validos) * 100
+    : 0;</code></pre>
+            <div class="pergunta">Por que o total de eleitores não é o denominador do percentual do candidato?</div>
+        </section>
+
+        <section class="slide" data-aula="Aula 7">
+            <span class="numero-aula">AULA 7 • CAMADAS DE PROTEÇÃO</span><h2>Segurança é um conjunto</h2>
+            <div class="grade-tres"><article class="cartao"><h3>Autenticação</h3><p>Protege o painel.</p></article><article class="cartao"><h3>CSRF</h3><p>Protege formulários.</p></article><article class="cartao"><h3>Validação</h3><p>Protege entradas.</p></article><article class="cartao"><h3>Transação</h3><p>Protege consistência.</p></article><article class="cartao"><h3>Banco</h3><p>Unique e foreign keys.</p></article><article class="cartao"><h3>Privacidade</h3><p>Voto sem eleitor_id.</p></article></div>
+        </section>
+
+        <section class="slide" data-aula="Aula 7">
+            <span class="numero-aula">AULA 7 • LIMITES</span><h2>Projeto educacional ≠ eleição oficial</h2>
+            <div class="comparacao"><article><h3>Adequado para</h3><p>aprender Laravel, simular votação em sala e discutir modelagem.</p><span class="bom">Ambiente didático</span></article><article><h3>Não adequado para</h3><p>eleições públicas, decisões legais ou cenários que exijam auditoria certificada.</p><span class="ruim">Sem garantias oficiais</span></article></div>
+            <aside class="notas"><strong>Discussão ética:</strong> peça que os alunos listem riscos técnicos e sociais de apresentar um protótipo como sistema oficial.</aside>
+        </section>
+
+        <section class="slide exercicio" data-aula="Aula 7">
+            <span class="numero-aula">AULA 7 • PRÁTICA</span><h2>Auditoria de segurança em grupos</h2>
+            <ol><li>Grupo A: autenticação e sessões.</li><li>Grupo B: formulários e validação.</li><li>Grupo C: banco, transações e concorrência.</li><li>Grupo D: privacidade e exposição de resultados.</li></ol>
+            <p>Cada grupo apresenta uma proteção existente, um risco restante e uma melhoria possível.</p>
+        </section>
+
+        <section class="slide divisoria" data-aula="Aula 8"><span>AULA 8</span><h2>Testes, depuração e entrega</h2><p>Provando que o comportamento continua correto.</p></section>
+
+        <section class="slide" data-aula="Aula 8">
+            <span class="numero-aula">AULA 8 • TESTE DE FEATURE</span><h2>Um teste conta uma história</h2>
+            <pre><code>public function test_eleitor_pode_votar_em_branco(): void
+{
+    Eleitor::create([
+        'nome' => 'José',
+        'codigo_acesso' => '333333'
+    ]);
+
+    $this->post(route('urna.acessar'), [
+        'codigo_acesso' => '333333'
+    ]);
+
+    $this->post(route('urna.confirmar'), ['tipo' => 'branco']);
+
+    $this->assertDatabaseHas('votos', ['tipo' => 'branco']);
+}</code></pre>
+        </section>
+
+        <section class="slide" data-aula="Aula 8">
+            <span class="numero-aula">AULA 8 • AAA</span><h2>Preparar, agir e verificar</h2>
+            <div class="grade-tres"><article class="cartao"><span>1</span><h3>Arrange</h3><p>Preparar eleição e eleitor.</p></article><article class="cartao"><span>2</span><h3>Act</h3><p>Enviar requisições.</p></article><article class="cartao"><span>3</span><h3>Assert</h3><p>Verificar resposta e banco.</p></article></div>
+            <p class="frase-chave">Teste bom descreve uma regra observável, não detalhes internos desnecessários.</p>
+        </section>
+
+        <section class="slide" data-aula="Aula 8">
+            <span class="numero-aula">AULA 8 • DIAGNÓSTICO</span><h2>Uma caixa de ferramentas</h2>
+            <div class="terminal"><p><span>$</span> php artisan test</p><p><span>$</span> php artisan route:list</p><p><span>$</span> php artisan migrate:status</p><p><span>$</span> php artisan config:clear</p><p><span>$</span> php artisan tinker</p></div>
+            <ul class="lista-check menor"><li>Leia a primeira causa, não apenas a última linha.</li><li>Reproduza o erro com o menor cenário possível.</li><li>Confira <code>storage/logs/laravel.log</code>.</li></ul>
+        </section>
+
+        <section class="slide" data-aula="Aula 8">
+            <span class="numero-aula">AULA 8 • AMBIENTE</span><h2>O arquivo .env muda entre máquinas</h2>
+            <pre><code>APP_ENV=local
+APP_DEBUG=true
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=urna_eletronica
+DB_USERNAME=root
+DB_PASSWORD="senha_local"</code></pre>
+            <div class="chips"><span>.env não vai para o Git</span><span>.env.example documenta</span><span>segredos não entram no código</span></div>
+            <aside class="notas"><strong>Caso real:</strong> use os erros “could not find driver” e “using password: NO” para mostrar diagnóstico por camadas.</aside>
+        </section>
+
+        <section class="slide" data-aula="Aula 8">
+            <span class="numero-aula">AULA 8 • ENTREGA</span><h2>Checklist antes de apresentar</h2>
+            <ul class="lista-check"><li>migrations executam em banco vazio;</li><li>seed cria dados de demonstração;</li><li>login, CRUD e votação funcionam;</li><li>voto duplicado é bloqueado;</li><li>apuração calcula corretamente;</li><li><code>php artisan test</code> passa;</li><li>README explica instalação e credenciais.</li></ul>
+        </section>
+
+        <section class="slide exercicio" data-aula="Aula 8">
+            <span class="numero-aula">AULA 8 • DESAFIO FINAL</span><h2>Evolua o produto</h2>
+            <div class="grade-tres"><article class="cartao"><h3>Nível 1</h3><p>Adicionar cargo e separar candidatos por cargo.</p></article><article class="cartao"><h3>Nível 2</h3><p>Adicionar turmas e filtrar eleitores.</p></article><article class="cartao"><h3>Nível 3</h3><p>Suportar várias eleições preservando históricos.</p></article></div>
+            <div class="criterios"><strong>Obrigatório:</strong> migration, Model, Controller, View, validação e teste.</div>
+        </section>
+
+        <section class="slide" data-aula="Avaliação">
+            <span class="numero-aula">AVALIAÇÃO DO PROJETO</span><h2>Rubrica transparente</h2>
+            <table><thead><tr><th>Critério</th><th>Peso</th><th>Evidência</th></tr></thead><tbody><tr><td>Modelagem e migrations</td><td>20%</td><td>estrutura coerente e reversível</td></tr><tr><td>MVC e organização</td><td>20%</td><td>responsabilidades bem separadas</td></tr><tr><td>Funcionalidades</td><td>25%</td><td>fluxos executáveis</td></tr><tr><td>Segurança e validação</td><td>15%</td><td>regras protegidas no servidor</td></tr><tr><td>Testes</td><td>10%</td><td>cenários relevantes</td></tr><tr><td>Explicação</td><td>10%</td><td>grupo compreende suas decisões</td></tr></tbody></table>
+        </section>
+
+        <section class="slide" data-aula="Revisão">
+            <span class="numero-aula">MAPA MENTAL FINAL</span><h2>Como tudo se conecta</h2>
+            <div class="mapa-final"><span>Requisito</span><b>→</b><span>Rota</span><b>→</b><span>Controller</span><b>→</b><span>Model</span><b>→</b><span>MySQL</span><b>→</b><span>View</span><b>→</b><span>Teste</span></div>
+            <div class="pergunta">Escolha uma funcionalidade da urna e explique sua passagem por cada etapa deste mapa.</div>
+        </section>
+
+        <section class="slide" data-aula="Revisão">
+            <span class="numero-aula">REVISÃO ORAL</span><h2>Dez perguntas essenciais</h2>
+            <div class="perguntas-duas"><p>1. Por que usar MVC?</p><p>2. O que uma rota faz?</p><p>3. Migration e Model são iguais?</p><p>4. Para que serve $fillable?</p><p>5. O que o middleware auth protege?</p><p>6. Por que validar no servidor?</p><p>7. Quando um voto é nulo?</p><p>8. Por que usar transação?</p><p>9. Como preservamos o sigilo?</p><p>10. O que um teste de feature verifica?</p></div>
+        </section>
+
+        <section class="slide capa final" data-aula="Encerramento">
+            <div class="selo">PROJETO CONCLUÍDO</div><h1>Código com propósito</h1>
+            <p class="subtitulo">Cada tela é resultado de decisões sobre dados, regras, pessoas e segurança.</p>
+            <div class="atalhos-finais"><span><kbd>←</kbd> <kbd>→</kbd> navegar</span><span><kbd>N</kbd> notas do professor</span><span><kbd>F</kbd> tela cheia</span><span><kbd>Ctrl</kbd> + <kbd>P</kbd> PDF</span></div>
+        </section>
+    </main>
+
+    <footer class="controles">
+        <button id="anterior" aria-label="Slide anterior">←</button>
+        <div><span id="aula-atual">Abertura</span><span id="contador">1 / 1</span></div>
+        <div class="progresso"><span id="barra-progresso"></span></div>
+        <button id="proximo" aria-label="Próximo slide">→</button>
+    </footer>
+    <script src="apresentacao-projeto.js"></script>
+</body>
+</html>

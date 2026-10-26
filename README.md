@@ -33,6 +33,20 @@ Simulação educacional de urna eletrônica construída com **Laravel 12**, **PH
 - `routes/web.php`: rotas da aplicação;
 - `public/css` e `public/js`: estilo e interação do teclado.
 
+## Materiais didáticos
+
+Na pasta `materiais` há duas apresentações HTML que funcionam offline:
+
+- `apresentacao-models-migrations.html`: 36 slides focados em Models, migrations e Eloquent;
+- `apresentacao-projeto-completo.html`: 62 slides sobre todo o projeto, organizados em oito aulas.
+
+Também estão disponíveis:
+
+- `roteiro-do-professor.md`: apoio para as aulas de Models e migrations;
+- `plano-didatico-projeto-completo.md`: objetivos, cronograma, práticas, dificuldades comuns, avaliação e projeto final.
+
+Nas apresentações, use as setas para navegar, `F` para tela cheia e `Ctrl + P` para exportar em PDF. Na apresentação completa, a tecla `N` mostra ou oculta as notas do professor.
+
 ## Requisitos
 
 - PHP 8.2 ou superior;
